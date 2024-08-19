@@ -16,6 +16,7 @@ droppedTrials = [];
 % indices of dropped values
 for ii = 1:size(data.values,3)
     plot(data.values(:,1,ii))
+    ylim([-0.6 0.6])
     decision = input(['Drop trial number ' num2str(ii) '/' num2str(size(data.values,3)) ' enter: y/n: \n'], 's');
     if strcmp(decision, 'y')
         droppedTrials = [droppedTrials, ii];
@@ -26,7 +27,8 @@ end
 data.values(:,:,droppedTrials) = [];
 data.frameinfo(droppedTrials,:) = [];
 
-save(fullfile(filepath, ['clean_' filename], extension), data)
+save(fullfile(filepath, ['clean_' filename extension]), 'data')
+close all
 
 end
 
