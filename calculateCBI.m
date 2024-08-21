@@ -1,4 +1,4 @@
-function CBIvalues = calculateCBI(inputData)
+function CBIvalues = calculateCBI(inputData, intensities)
 
     % Put everything in a cell so the scipt supports multiple input
     dataCell = {};
@@ -34,13 +34,14 @@ function CBIvalues = calculateCBI(inputData)
         CScut = CS(1010:end, :);
 
         % Prepare subplots for showing averages 
+        figure(1)
         subplot(1, size(dataCell,2), ii);
-        plot(mean(TScut,2));
+        plot(mean(TScut,2), 'b');
         hold on 
-        plot(mean(CScut,2));
+        plot(mean(CScut,2), 'r');
         ylim([-1 1])
         legend('TS', 'CS')
-        title(strrep(filename, '_', '-'));
+        title([num2str(intensities(ii)) ' MSO%']);
 
         % Loop through the trials and get the peak to peak and calculate
         % CBI
@@ -53,5 +54,15 @@ function CBIvalues = calculateCBI(inputData)
             CSpeakToPeak = [CSpeakToPeak peak2peak(CScut(:,trial))];      
         end
         CBIvalues(ii) = mean(TSpeakToPeak) / mean(CSpeakToPeak);
+
+        % Plot peak2peak values separately for each intensity
+        figure(2)
+        subplot(1, size(dataCell,2), ii);
+        scatter(ones(size(TSpeakToPeak,2)), TSpeakToPeak, 'ob', 'filled');
+        hold on 
+        scatter(ones(size(CSpeakToPeak,2))*2, CSpeakToPeak, 'or', 'filled');
+        xlim([0 3])
+        set(gca, 'XTick', [1, 2], 'XTickLabel', {'TS', 'CS'});
+        title([num2str(intensities(ii)) ' MSO%']);
     end
 end
