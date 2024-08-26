@@ -1,4 +1,16 @@
 function CBIvalues = calculateCBI(inputData, intensities)
+    % This function calculates CBI values and plots CBI results. 
+    %   inputData = input mat file converted from signal format on Signal
+    %               software. To save your data as mat, use the export 
+    %               option in signal. You need to pass your data as a cell.
+    %               See below for usage.
+    %   intensities = Enter the MSO you used for the CBI. You can enter
+    %                 multiple numbers in a struct if you tried different
+    %                 intensities on the same subject. The number of
+    %                 entries to intensities should match number of files
+    %                 you enter in inputData, so make sure you are saving 
+    %                 each intensity in different files in Spike. 
+    % 
 
     % Put everything in a cell so the scipt supports multiple input
     dataCell = {};
