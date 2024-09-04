@@ -51,7 +51,7 @@ function CBIvalues = calculateCBI(inputData, intensities)
         plot(mean(TScut,2), 'b');
         hold on 
         plot(mean(CScut,2), 'r');
-        ylim([-1 1])
+        ylim([-0.5 0.5])
         legend('TS', 'CS')
         title([num2str(intensities(ii)) ' MSO%']);
 
