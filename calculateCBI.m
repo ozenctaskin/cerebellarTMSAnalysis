@@ -65,7 +65,7 @@ function CBIvalues = calculateCBI(inputData, intensities)
         for trial = 1:size(CScut,2)
             CSpeakToPeak = [CSpeakToPeak peak2peak(CScut(:,trial))];      
         end
-        CBIvalues(ii) = mean(TSpeakToPeak) / mean(CSpeakToPeak);
+        CBIvalues(ii) = mean(CSpeakToPeak) / mean(TSpeakToPeak);
 
         % Plot peak2peak values separately for each intensity
         figure(2)
