@@ -1,7 +1,28 @@
 function dystoniaSubjectAnalysis(subjectFolder, test, runCleaning)
 
-    % ADD A WAY TO GET THE CLEAN FILE 
-
+    % Script to analyze dystonia TMS data. The files are found
+    % automatically and plotted with a few diagnostic indicators. A red box
+    % is drawn with -0.5 - 0.5 borders to visually inspect the background
+    % muscle activity. Peaks are also detected automatically and plotted.
+    % If multiple peaks appear, this is shown on the figure as a warning.
+    % 3xRMS is calculated from background activity and if peak-to-peak
+    % measurement is smaller than this amount, another warning is plotted.
+    % Peak-to-peak activity is calculated in a window between 3-5sec which
+    % is placed 0.2sec after the test pulse in both CBI and IC data. 
+    %
+    % The script creates an empty analysis folder in the subject directory.
+    % Once the visual inspection is done, this folder is populated with a
+    % few diagnostic images. Cleaned up data is also saved in here as a
+    % .mat file. 
+    %
+    %   Inputs:
+    %   subjectFolder: Path to subject folder. CBI and IC files are found
+    %                  automatically.
+    %   test:          Enter 'CBI' or 'IC' or 'All' to do a part of the
+    %                  analysis or all of it. 
+    %   runCleaning  : Enter true or false. The latter skips the cleaning
+    %                  step and does the analysis on raw data.
+    %
 
     % Create a new folder in the subject folder to save analysis files
     analysisFolder = fullfile(subjectFolder, 'analysisFolder');
@@ -114,8 +135,8 @@ function dystoniaSubjectAnalysis(subjectFolder, test, runCleaning)
         % The last stimulus artifact happen at frame 1003. We will get the
         % data after datapoint 1050 to make sure we are not getting any 
         % artifacts in the calculation.
-        TS = TS(1050:end, :);
-        CS = CS(1050:end, :);
+        TS = TS(1050:1500, :);
+        CS = CS(1050:1500, :);
     
         % Get the peak2peak calculations
         TSpeakToPeak = peak2peak(TS);
@@ -165,6 +186,11 @@ function dystoniaSubjectAnalysis(subjectFolder, test, runCleaning)
         % Now plot the IC trials and ask for the index of bad data
         ICbads = [];
         if runCleaning
+            % Create a sub-folder in the folder above for diagnostics
+            diagnostics = fullfile(ICplotFolder, 'diagnostics');
+            if ~isfolder(diagnostics)
+                system(['mkdir ' diagnostics]);
+            end
             for ii = 1:size(ICdata.([ICvarName, '_wave_data']).values, 3)
                 data = ICdata.([ICvarName, '_wave_data']).values(:,1,ii);
                 figure
@@ -209,6 +235,7 @@ function dystoniaSubjectAnalysis(subjectFolder, test, runCleaning)
                 if strcmp(ask, 'y')
                     ICbads = [ICbads, ii];
                 end
+                saveas(gcf, fullfile(diagnostics, ['Trial_' num2str(ii), '.png']));
                 close all
             end
         end
@@ -238,11 +265,11 @@ function dystoniaSubjectAnalysis(subjectFolder, test, runCleaning)
 
         % Do the cutting. For TS, the last pulse comes in at frame 1003,
         % so we will cut from 1040. 
-        TS = TS(1050:end, :);
-        SICI = SICI(1050:end, :);
-        SICF14 = SICF14(1050:end, :);
-        SICF22 = SICF22(1050:end, :);
-        LICI = LICI(1050:end, :);
+        TS = TS(1050:1500, :);
+        SICI = SICI(1050:1500, :);
+        SICF14 = SICF14(1050:1500, :);
+        SICF22 = SICF22(1050:1500, :);
+        LICI = LICI(1050:1500, :);
 
         % Save a plot showing averages
         figure('Visible','off')
@@ -303,8 +330,3 @@ function dystoniaSubjectAnalysis(subjectFolder, test, runCleaning)
 
     end     
 end
-
-
-
-
-
