@@ -27,7 +27,7 @@ function dystoniaSubjectAnalysis(subjectFolder, test, runCleaning)
     % Create a new folder in the subject folder to save analysis files
     analysisFolder = fullfile(subjectFolder, 'analysisFolder');
     if ~isfolder(analysisFolder)
-        system(['mkdir ' analysisFolder])
+        system(['mkdir ' analysisFolder]);
     end
 
     % Get all files in the directory
@@ -44,7 +44,7 @@ function dystoniaSubjectAnalysis(subjectFolder, test, runCleaning)
         % Create CBI plot folder 
         CBIplotFolder = fullfile(analysisFolder, 'CBI_plots');
         if ~isfolder(CBIplotFolder)
-            system(['mkdir ' CBIplotFolder])
+            system(['mkdir ' CBIplotFolder]);
         end
         
         % Find the CBI files by looking for CBI and .mat in names
@@ -100,10 +100,13 @@ function dystoniaSubjectAnalysis(subjectFolder, test, runCleaning)
                 hold off             
                 ask = input(['Drop trial number ' num2str(ii) '/' num2str(size(CBIdata.([CBIvarName, '_wave_data']).values,3)) ' enter: y/n: \n'], 's');
                 if strcmp(ask, 'y')
-                    title(['DROPPED ' CBIdata.([CBIvarName, '_wave_data']).frameinfo(ii).label ' ,Trial ' num2str(ii)])
                     CBIbads = [CBIbads, ii];
+                    title(['DROPPED ' CBIdata.([CBIvarName, '_wave_data']).frameinfo(ii).label ' ,Trial ' num2str(ii)])
+                    saveas(gcf, fullfile(diagnostics, ['DROPPED_Trial_' num2str(ii), '.png']));
+                else
+                    title([CBIdata.([CBIvarName, '_wave_data']).frameinfo(ii).label ' ,Trial ' num2str(ii)])
+                    saveas(gcf, fullfile(diagnostics, ['Trial_' num2str(ii), '.png']));
                 end
-                saveas(gcf, fullfile(diagnostics, ['Trial_' num2str(ii), '.png']));
                 close all
             end
         end
@@ -204,10 +207,10 @@ function dystoniaSubjectAnalysis(subjectFolder, test, runCleaning)
                 end
                 plot([(0.5*1500/5):limit], ones(length([(0.5*1500/5):limit]))*0.05, 'r')
                 plot([(0.5*1500/5):limit], ones(length([(0.5*1500/5):limit]))*-0.05, 'r')
-                maxIdx = find(data(1050:end) == max(data(1050:end)));
-                minIdx = find(data(1050:end) == min(data(1050:end)));
-                plot((1050 + maxIdx-1), max(data(1050:end)), 'r*')
-                plot((1050 + minIdx-1 ), min(data(1050:end)), 'r*')
+                maxIdx = find(data(1050:1500) == max(data(1050:1500)));
+                minIdx = find(data(1050:1500) == min(data(1050:1500)));
+                plot((1050 + maxIdx-1), max(data(1050:1500)), 'r*')
+                plot((1050 + minIdx-1 ), min(data(1050:1500)), 'r*')
                 
                 % Check multiple occurances of max min values and plot
                 % warning
@@ -221,7 +224,7 @@ function dystoniaSubjectAnalysis(subjectFolder, test, runCleaning)
                 
                 % Check baseline 3*RMS and plot a warning if MEP is smaller
                 % than this threshold
-                if peak2peak(data(1050:end)) < rms(data((0.5*1500/5):limit)) * RMSmult
+                if peak2peak(data(1050:1500)) < rms(data((0.5*1500/5):limit)) * RMSmult
                     xLimits = xlim;
                     yLimits = ylim;
                     text(xLimits(2), yLimits(2) - 0.1*(yLimits(2) - yLimits(1)), ['Warning: MEP < ' num2str(RMSmult) 'xRMS'], ...
@@ -234,8 +237,12 @@ function dystoniaSubjectAnalysis(subjectFolder, test, runCleaning)
                 ask = input(['Drop trial number ' num2str(ii) '/' num2str(size(ICdata.([ICvarName, '_wave_data']).values,3)) ' enter: y/n: \n'], 's');
                 if strcmp(ask, 'y')
                     ICbads = [ICbads, ii];
+                    title(['DROPPED ' ICdata.([ICvarName, '_wave_data']).frameinfo(ii).label])
+                    saveas(gcf, fullfile(diagnostics, ['DROPPED_Trial_' num2str(ii), '.png']));
+                else
+                    title(ICdata.([ICvarName, '_wave_data']).frameinfo(ii).label)
+                    saveas(gcf, fullfile(diagnostics, ['Trial_' num2str(ii), '.png']));
                 end
-                saveas(gcf, fullfile(diagnostics, ['Trial_' num2str(ii), '.png']));
                 close all
             end
         end
