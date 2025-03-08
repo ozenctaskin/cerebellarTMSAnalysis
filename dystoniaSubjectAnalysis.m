@@ -38,7 +38,6 @@ function dystoniaSubjectAnalysis(subjectFolder, test, runCleaning)
     RMSmult = 3;
 
     %% CBI analysis section
-
     if strcmp(test, 'CBI') || strcmp(test, 'All')
         
         % Create CBI plot folder 
@@ -336,4 +335,5 @@ function dystoniaSubjectAnalysis(subjectFolder, test, runCleaning)
         save(fullfile(analysisFolder, 'ICresults.mat'), 'ICresults');
 
     end     
+    close all
 end
